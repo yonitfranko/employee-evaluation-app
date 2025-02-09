@@ -30,6 +30,17 @@ const EmployeeEvaluation = () => {
       setSavedEmployees(JSON.parse(saved));
     }
   }, []);
+  const categoryDescriptions = {
+  'Super Bringgsters': 'מובילים ומצטיינים בארגון. משלבים ביצועים ופוטנציאל גבוהים. יש לשמר, לתגמל ולהציב אתגרים חדשים.',
+  'Rising Bringgsters': 'בעלי פוטנציאל גבוה וביצועים טובים. מועמדים מצוינים לקידום ופיתוח מנהיגותי. יש להשקיע בהכשרתם.',
+  'Enigma': 'בעלי פוטנציאל גבוה אך ביצועים נמוכים יחסית. נדרשת בחינה מעמיקה של החסמים ותכנית פיתוח ממוקדת.',
+  'Bringg Influencers': 'מובילי דעה ומשפיעים בארגון. ביצועים גבוהים ופוטנציאל בינוני. חשובים ליציבות ולהעברת ידע.',
+  'Core Bringgsters': 'עמוד השדרה של הארגון. ביצועים ופוטנציאל בינוניים-טובים. יציבים ומהימנים. יש לשמר ולפתח.',
+  'Dilemma': 'פוטנציאל בינוני וביצועים נמוכים. נדרשת החלטה האם להשקיע בפיתוח או לשקול התאמה מחדש.',
+  'Experts': 'מומחים מקצועיים עם ביצועים גבוהים אך פוטנציאל נמוך לתפקידי ניהול. יש לפתח מסלול מקצועי.',
+  'Effective': 'ביצועים ופוטנציאל בינוניים-נמוכים. מבצעים את עבודתם נאמנה אך ללא בולטות מיוחדת.',
+  'Up or Out': 'ביצועים ופוטנציאל נמוכים. נדרשת תכנית שיפור מיידית או שקילת המשך העסקה.'
+};
 
   const performanceQuestions = [
     'עד כמה העובד ממלא את משימותיו באופן מקצועי ואיכותי?',
@@ -266,14 +277,17 @@ const EmployeeEvaluation = () => {
               <Progress value={(results.potentialTotal / 60) * 100} className="mt-2" />
               <p>קטגוריה: {results.potentialCategory}</p>
             </div>
-
-            {results.category && (
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <h3 className="text-xl font-bold text-center">תוצאה סופית</h3>
-                <p className="text-center text-lg mt-2">{results.category}</p>
-              </div>
-            )}
-          </div>
+    {results.category && (
+  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+    <h3 className="text-xl font-bold text-center">תוצאה סופית</h3>
+    <p className="text-center text-lg mt-2">{results.category}</p>
+    <p className="text-right text-sm mt-4 text-gray-700">
+      {categoryDescriptions[results.category]}
+    </p>
+  </div>
+)}
+         
+                     </div>
         </CardContent>
       </Card>
     </div>
