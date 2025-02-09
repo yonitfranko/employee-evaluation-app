@@ -6,6 +6,8 @@ import { Button } from "../../src/components/ui/button";
 import { Progress } from "../../src/components/ui/progress";
 import { Alert, AlertDescription } from "../../src/components/ui/alert";
 import { Save } from 'lucide-react';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+
 
 const EmployeeEvaluation = () => {
   const [employeeName, setEmployeeName] = useState('');
@@ -22,6 +24,15 @@ const EmployeeEvaluation = () => {
     potentialCategory: '',
     category: ''
   });
+
+  const prepareChartData = () => {
+    return savedEmployees.map(employee => ({
+      name: employee.employeeName,
+      x: employee.results.performanceTotal,
+      y: employee.results.potentialTotal,
+    }));
+  };
+  
 
   // Load saved data on initial render
   useEffect(() => {
@@ -167,6 +178,15 @@ const EmployeeEvaluation = () => {
     });
   }, [performanceScores, potentialScores]);
 
+  const referenceLines = [
+    { x: 21, y: null, stroke: "#666", strokeDasharray: "3 3" },
+    { x: 33, y: null, stroke: "#666", strokeDasharray: "3 3" },
+    { y: 28, x: null, stroke: "#666", strokeDasharray: "3 3" },
+    { y: 34, x: null, stroke: "#666", strokeDasharray: "3 3" }
+  ].map((line, index) => (
+    <ReferenceLine key={index} {...line} />
+  ));
+  
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6" dir="rtl">
       <Card>
@@ -287,7 +307,57 @@ const EmployeeEvaluation = () => {
     </p>
   </div>
 )}
-           
+           <div className="mt-8 h-96">
+  <h3 className="text-lg mb-4">פיזור עובדים לפי ביצועים ופוטנציאל</h3>
+  <ResponsiveContainer width="100%" height="100%">
+    <ScatterChart
+      margin={{
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20,
+      }}
+    >
+      <CartesianGrid />
+      <XAxis 
+        type="number" 
+        dataKey="x" 
+        name="ביצועים" 
+        label={{ value: 'רמת ביצועים', position: 'bottom' }}
+        domain={[0, 45]}
+      />
+      <YAxis 
+        type="number" 
+        dataKey="y" 
+        name="פוטנציאל" 
+        label={{ value: 'פוטנציאל', angle: -90, position: 'left' }}
+        domain={[0, 60]}
+      />
+      <Tooltip 
+        cursor={{ strokeDasharray: '3 3' }}
+        content={({ payload }) => {
+          if (payload && payload.length) {
+            return (
+              <div className="bg-white p-2 border rounded shadow">
+                <p>{payload[0].payload.name}</p>
+                <p>ביצועים: {payload[0].value}</p>
+                <p>פוטנציאל: {payload[1].value}</p>
+              </div>
+            );
+          }
+          return null;
+        }}
+      />
+      <Scatter 
+        name="עובדים" 
+        data={prepareChartData()} 
+        fill="#8884d8"
+      />
+    </ScatterChart>
+  </ResponsiveContainer>
+</div>
+
+
                      </div>
         </CardContent>
       </Card>
