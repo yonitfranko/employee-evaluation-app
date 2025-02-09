@@ -277,16 +277,17 @@ const EmployeeEvaluation = () => {
               <Progress value={(results.potentialTotal / 60) * 100} className="mt-2" />
               <p>קטגוריה: {results.potentialCategory}</p>
             </div>
-    {results.category && (
+
+            {results.category && (
   <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-    <h3 className="text-xl font-bold text-center">תוצאה סופית</h3>
-    <p className="text-center text-lg mt-2">{results.category}</p>
-    <p className="text-right text-sm mt-4 text-gray-700">
+    <h3 className="text-xl text-center">תוצאה סופית</h3>
+    <p className="text-center text-lg mt-2 font-bold">{results.category}</p>
+    <p className="text-center text-sm mt-4 text-gray-700">
       {categoryDescriptions[results.category]}
     </p>
   </div>
 )}
-         
+           
                      </div>
         </CardContent>
       </Card>
