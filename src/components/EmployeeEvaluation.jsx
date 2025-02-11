@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { Save } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine } from 'recharts';
 
-const EmployeeEvaluation = () => {
+const EmployeeEvaluation = ({ schoolDomain }) => {
   console.log('EmployeeEvaluation is rendering');
 
   const [employeeName, setEmployeeName] = useState('');
@@ -37,11 +37,11 @@ const EmployeeEvaluation = () => {
 
   // Load saved data on initial render
   useEffect(() => {
-    const saved = localStorage.getItem('employeeEvaluations');
+    const saved = localStorage.getItem(`employeeEvaluations_${schoolDomain}`);
     if (saved) {
       setSavedEmployees(JSON.parse(saved));
     }
-  }, []);
+  }, [schoolDomain]);
   const categoryDescriptions = {
   'Super Bringgsters': 'מובילים ומצטיינים בארגון. משלבים ביצועים ופוטנציאל גבוהים. יש לשמר, לתגמל ולהציב אתגרים חדשים.',
   'Rising Bringgsters': 'בעלי פוטנציאל גבוה וביצועים טובים. מועמדים מצוינים לקידום ופיתוח מנהיגותי. יש להשקיע בהכשרתם.',
@@ -111,7 +111,7 @@ const EmployeeEvaluation = () => {
       updatedEmployees.push(evaluationData);
     }
 
-    localStorage.setItem('employeeEvaluations', JSON.stringify(updatedEmployees));
+    localStorage.setItem(`employeeEvaluations_${schoolDomain}`, JSON.stringify(updatedEmployees));
     setSavedEmployees(updatedEmployees);
     setSaveMessage('הנתונים נשמרו בהצלחה');
     
