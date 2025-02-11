@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "../../src/components/ui/card";
-import { Label } from "../../src/components/ui/label";
-import { Input } from "../../src/components/ui/input";
-import { Button } from "../../src/components/ui/button";
-import { Progress } from "../../src/components/ui/progress";
-import { Alert, AlertDescription } from "../../src/components/ui/alert";
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Progress } from "./ui/progress";
+import { Alert, AlertDescription } from "./ui/alert";
 import { Save } from 'lucide-react';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine } from 'recharts';
 
 const EmployeeEvaluation = () => {
+  console.log('EmployeeEvaluation is rendering');
+
   const [employeeName, setEmployeeName] = useState('');
   const [performanceScores, setPerformanceScores] = useState({});
   const [potentialScores, setPotentialScores] = useState({});
@@ -140,60 +141,108 @@ const EmployeeEvaluation = () => {
     });
     setSelectedEmployee(null);
   };
-
-  useEffect(() => {
-    const performanceTotal = Object.values(performanceScores).reduce((a, b) => a + b, 0);
-    const potentialTotal = Object.values(potentialScores).reduce((a, b) => a + b, 0);
+  const gridBoxes = [
+    // שורה עליונה (40-60)
+    { title: 'Enigma', percent: '7%', x: [0, 15], y: [40, 60] },
+    { title: 'Rising Bringgsters', percent: '10%', x: [15, 30], y: [40, 60] },
+    { title: 'Super Bringgsters', percent: '5%', x: [30, 45], y: [40, 60] },
     
-    let performanceCategory = '';
-    if (performanceTotal <= 21) performanceCategory = 'נמוך';
-    else if (performanceTotal <= 33) performanceCategory = 'בינוני';
-    else performanceCategory = 'גבוה';
-
-    let potentialCategory = '';
-    if (potentialTotal <= 28) potentialCategory = 'נמוך';
-    else if (potentialTotal <= 34) potentialCategory = 'בינוני';
-    else potentialCategory = 'גבוה';
-
-    const categories = {
-      'נמוך-נמוך': 'Up or Out',
-      'נמוך-בינוני': 'Dilemma',
-      'נמוך-גבוה': 'Enigma',
-      'בינוני-נמוך': 'Effective',
-      'בינוני-בינוני': 'Core Bringgsters',
-      'בינוני-גבוה': 'Rising Bringgsters',
-      'גבוה-נמוך': 'Experts',
-      'גבוה-בינוני': 'Bringg Influencers',
-      'גבוה-גבוה': 'Super Bringgsters'
-    };
-
-    const key = `${performanceCategory}-${potentialCategory}`;
+    // שורה אמצעית (20-40)
+    { title: 'Dilemma', percent: '5%', x: [0, 15], y: [20, 40] },
+    { title: 'Core Bringgsters', percent: '35%', x: [15, 30], y: [20, 40] },
+    { title: 'Bringg Influencers', percent: '10%', x: [30, 45], y: [20, 40] },
     
-    setResults({
-      performanceTotal,
-      potentialTotal,
-      performanceCategory,
-      potentialCategory,
-      category: categories[key] || ''
-    });
-  }, [performanceScores, potentialScores]);
+    // שורה תחתונה (0-20)
+    { title: 'Up or Out', percent: '3%', x: [0, 15], y: [0, 20] },
+    { title: 'Effective', percent: '15%', x: [15, 30], y: [0, 20] },
+    { title: 'Experts', percent: '10%', x: [30, 45], y: [0, 20] }
+];
 
-  const referenceLines = [
-    { x: 21, y: null, stroke: "#666", strokeDasharray: "3 3" },
-    { x: 33, y: null, stroke: "#666", strokeDasharray: "3 3" },
-    { y: 28, x: null, stroke: "#666", strokeDasharray: "3 3" },
-    { y: 34, x: null, stroke: "#666", strokeDasharray: "3 3" }
+useEffect(() => {
+  const performanceTotal = Object.values(performanceScores).reduce((a, b) => a + b, 0);
+  const potentialTotal = Object.values(potentialScores).reduce((a, b) => a + b, 0);
+  
+  let performanceCategory = '';
+  if (performanceTotal <= 15) performanceCategory = 'נמוך';
+  else if (performanceTotal <= 30) performanceCategory = 'בינוני';
+  else performanceCategory = 'גבוה';
+
+  let potentialCategory = '';
+  if (potentialTotal <= 20) potentialCategory = 'נמוך';
+  else if (potentialTotal <= 40) potentialCategory = 'בינוני';
+  else potentialCategory = 'גבוה';
+
+  const categories = {
+    'נמוך-נמוך': 'Up or Out',
+    'נמוך-בינוני': 'Dilemma',
+    'נמוך-גבוה': 'Enigma',
+    'בינוני-נמוך': 'Effective',
+    'בינוני-בינוני': 'Core Bringgsters',
+    'בינוני-גבוה': 'Rising Bringgsters',
+    'גבוה-נמוך': 'Experts',
+    'גבוה-בינוני': 'Bringg Influencers',
+    'גבוה-גבוה': 'Super Bringgsters'
+  };
+
+  const key = `${performanceCategory}-${potentialCategory}`;
+  
+  setResults({
+    performanceTotal,
+    potentialTotal,
+    performanceCategory,
+    potentialCategory,
+    category: categories[key] || ''
+  });
+}, [performanceScores, potentialScores]);
+
+    const referenceLines = [
+    // קווים אנכיים (על ציר ה-X)
+    { x: 21, stroke: "#666", strokeDasharray: "3 3" },
+    { x: 33, stroke: "#666", strokeDasharray: "3 3" },
+    // קווים אופקיים (על ציר ה-Y)
+    { y: 28, stroke: "#666", strokeDasharray: "3 3" },
+    { y: 34, stroke: "#666", strokeDasharray: "3 3" }
   ].map((line, index) => (
-    <ReferenceLine key={index} {...line} />
+    <ReferenceLine 
+      key={index} 
+      x={line.x}
+      y={line.y}
+      stroke={line.stroke}
+      strokeDasharray={line.strokeDasharray}
+    />
   ));
   
-  return (
+ return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6" dir="rtl">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">טופס הערכת עובדים</CardTitle>
-        </CardHeader>
-        <CardContent>
+            <h1>טופס הערכת עובדים</h1>  {/* הוסיפי שורה זו */}
+
+<Card>
+  <CardHeader>
+    <CardTitle className="text-2xl font-bold text-center">טופס הערכת עובדים</CardTitle>
+    <div className="mt-4 text-sm text-gray-600 space-y-2">
+      <p>
+        השאלון והמודל נועדו להוות כלי עזר אפקטיבי להערכה, זיהוי עובדים מובילים והכוונתם לפיתוח מקצועי ואישי מותאם. הקפידו למלא אותו באופן אובייקטיבי ככל הניתן על סמך תצפיות, ניסיון והיכרות מעמיקה עם העובדים.
+      </p>
+      <div className="bg-gray-50 p-3 rounded-md">
+        <p className="font-medium mb-2">סולם הדירוג:</p>
+        <div className="grid grid-cols-5 gap-2 text-center">
+          <div>1 - לא קיים בכלל</div>
+          <div>2 - רמה נמוכה</div>
+          <div>3 - רמה סבירה/מספקת</div>
+          <div>4 - רמה גבוהה</div>
+          <div>5 - רמה גבוהה מאוד</div>
+        </div>
+      </div>
+      <div className="mt-4">
+        <p><strong>שני חלקי ההערכה:</strong></p>
+        <ul className="list-disc list-inside mt-2">
+          <li><strong>רמת ביצועים</strong> – מתייחס לתפקוד העובד, ביצוע משימותיו, איכות העבודה ועמידה ביעדים.</li>
+          <li><strong>פוטנציאל</strong> – מתייחס ליכולת העובד להתפתח, להתמודד עם אתגרים ולממש תפקידים מורכבים או ניהוליים בעתיד.</li>
+        </ul>
+      </div>
+    </div>
+  </CardHeader>
+            <CardContent>
           <div className="mb-6">
             <div className="flex justify-between items-end gap-4">
               <div className="flex-1">
@@ -307,57 +356,89 @@ const EmployeeEvaluation = () => {
     </p>
   </div>
 )}
-           <div className="mt-8 h-96">
+<div className="mt-8 h-96">
   <h3 className="text-lg mb-4">פיזור עובדים לפי ביצועים ופוטנציאל</h3>
   <ResponsiveContainer width="100%" height="100%">
-    <ScatterChart
-      margin={{
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20,
-      }}
-    >
-      <CartesianGrid />
-      <XAxis 
-        type="number" 
-        dataKey="x" 
-        name="ביצועים" 
-        label={{ value: 'רמת ביצועים', position: 'bottom' }}
-        domain={[0, 45]}
-      />
-      <YAxis 
-        type="number" 
-        dataKey="y" 
-        name="פוטנציאל" 
-        label={{ value: 'פוטנציאל', angle: -90, position: 'left' }}
-        domain={[0, 60]}
-      />
-      <Tooltip 
-        cursor={{ strokeDasharray: '3 3' }}
-        content={({ payload }) => {
-          if (payload && payload.length) {
-            return (
-              <div className="bg-white p-2 border rounded shadow">
-                <p>{payload[0].payload.name}</p>
-                <p>ביצועים: {payload[0].value}</p>
-                <p>פוטנציאל: {payload[1].value}</p>
-              </div>
-            );
-          }
-          return null;
-        }}
-      />
-      <Scatter 
-        name="עובדים" 
-        data={prepareChartData()} 
-        fill="#8884d8"
-      />
-    </ScatterChart>
+  <ScatterChart
+  margin={{
+    top: 20,
+    right: 20,
+    bottom: 20,
+    left: 20,
+  }}
+>
+  <CartesianGrid strokeDasharray="3 3" />
+  <XAxis 
+    type="number" 
+    dataKey="x" 
+    name="ביצועים" 
+    label={{ value: 'רמת ביצועים', position: 'bottom' }}
+    domain={[0, 45]}
+  />
+  <YAxis 
+    type="number" 
+    dataKey="y" 
+    name="פוטנציאל" 
+    label={{ value: 'פוטנציאל', angle: -90, position: 'left' }}
+    domain={[0, 60]}
+  />
+  <Tooltip 
+    cursor={{ strokeDasharray: '3 3' }}
+    content={({ payload }) => {
+      if (payload && payload.length) {
+        return (
+          <div className="bg-white p-2 border rounded shadow">
+            <p>{payload[0].payload.name}</p>
+            <p>ביצועים: {payload[0].value}</p>
+            <p>פוטנציאל: {payload[1].value}</p>
+          </div>
+        );
+      }
+      return null;
+    }}
+  />
+ <Scatter 
+  name="עובדים" 
+  data={prepareChartData()} 
+  fill="#8884d8"
+  fillOpacity={0.6}
+  stroke="#8884d8"
+  strokeWidth={2}
+  r={6}  // גודל הנקודות
+/>
+  
+{/* קווי הייחוס */}
+<ReferenceLine x={15} stroke="#666" strokeDasharray="3 3" />
+<ReferenceLine x={30} stroke="#666" strokeDasharray="3 3" />
+<ReferenceLine y={20} stroke="#666" strokeDasharray="3 3" />
+<ReferenceLine y={40} stroke="#666" strokeDasharray="3 3" />
+
+  {/* התיבות */}
+
+{gridBoxes.map((box, index) => (
+  <ReferenceArea
+    key={index}
+    x1={box.x[0]}
+    x2={box.x[1]}
+    y1={box.y[0]}
+    y2={box.y[1]}
+    stroke="#666"
+    strokeOpacity={0.3}
+    fill="#f0f0f0"
+    fillOpacity={0.1}
+    label={{
+      value: `${box.title}\n${box.percent}`,
+      position: 'center',
+      fill: '#666',
+      fontSize: 12
+    }}
+  />
+))}
+
+ </ScatterChart>
+                
   </ResponsiveContainer>
-</div>
-
-
+</div> 
                      </div>
         </CardContent>
       </Card>
