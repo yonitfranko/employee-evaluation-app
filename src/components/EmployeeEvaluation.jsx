@@ -27,11 +27,16 @@ const EmployeeEvaluation = ({ schoolDomain }) => {
   });
 
   const prepareChartData = () => {
-    return savedEmployees.map(employee => ({
-      name: employee.employeeName,
-      x: employee.results.performanceTotal,
-      y: employee.results.potentialTotal,
-    }));
+    const data = savedEmployees.map(employee => {
+      const item = {
+        name: employee.employeeName,
+        x: employee.results.performanceTotal,
+        y: employee.results.potentialTotal,
+      };
+      console.log('Chart data item:', item); // נוסיף לוג לכל פריט
+      return item;
+    });
+    return data;
   };
   
 
@@ -359,14 +364,12 @@ useEffect(() => {
 <div className="mt-8 h-96">
   <h3 className="text-lg mb-4">פיזור עובדים לפי ביצועים ופוטנציאל</h3>
   <ResponsiveContainer width="100%" height="100%">
-  <ScatterChart
-  margin={{
+  <ScatterChart margin={{
     top: 20,
     right: 20,
     bottom: 20,
     left: 20,
-  }}
->
+  }}>
   <CartesianGrid strokeDasharray="3 3" />
   <XAxis 
     type="number" 
@@ -382,60 +385,63 @@ useEffect(() => {
     label={{ value: 'פוטנציאל', angle: -90, position: 'left' }}
     domain={[0, 60]}
   />
-  <Tooltip 
-    cursor={{ strokeDasharray: '3 3' }}
-    content={({ payload }) => {
-      if (payload && payload.length) {
-        return (
-          <div className="bg-white p-2 border rounded shadow">
-            <p>{payload[0].payload.name}</p>
-            <p>ביצועים: {payload[0].value}</p>
-            <p>פוטנציאל: {payload[1].value}</p>
-          </div>
-        );
-      }
-      return null;
-    }}
-  />
- <Scatter 
-  name="עובדים" 
-  data={prepareChartData()} 
-  fill="#8884d8"
-  fillOpacity={0.6}
-  stroke="#8884d8"
-  strokeWidth={2}
-  r={6}  // גודל הנקודות
+ 
+ <Tooltip
+  content={props => {
+    console.log('Tooltip props:', props);  // נוסיף לוג לבדיקה
+    const { active, payload } = props;
+    
+    if (!active || !payload || !payload.length) return null;
+    
+    const item = payload[0].payload;
+    return (
+      <div className="bg-white p-3 border rounded-lg shadow-lg" dir="rtl">
+        <p className="font-bold">{item.name}</p>
+        <div className="mt-1">
+          <p>ביצועים: {item.x}</p>
+          <p>פוטנציאל: {item.y}</p>
+        </div>
+      </div>
+    );
+  }}
 />
+    <Scatter 
+    name="עובדים" 
+    data={prepareChartData()} 
+    fill="#8884d8"
+    fillOpacity={0.6}
+    stroke="#8884d8"
+    strokeWidth={2}
+    r={6}
+  />
   
-{/* קווי הייחוס */}
-<ReferenceLine x={15} stroke="#666" strokeDasharray="3 3" />
-<ReferenceLine x={30} stroke="#666" strokeDasharray="3 3" />
-<ReferenceLine y={20} stroke="#666" strokeDasharray="3 3" />
-<ReferenceLine y={40} stroke="#666" strokeDasharray="3 3" />
+  {/* קווי הייחוס */}
+  <ReferenceLine x={15} stroke="#666" strokeDasharray="3 3" />
+  <ReferenceLine x={30} stroke="#666" strokeDasharray="3 3" />
+  <ReferenceLine y={20} stroke="#666" strokeDasharray="3 3" />
+  <ReferenceLine y={40} stroke="#666" strokeDasharray="3 3" />
 
   {/* התיבות */}
-
-{gridBoxes.map((box, index) => (
-  <ReferenceArea
-    key={index}
-    x1={box.x[0]}
-    x2={box.x[1]}
-    y1={box.y[0]}
-    y2={box.y[1]}
-    stroke="#666"
-    strokeOpacity={0.3}
-    fill="#f0f0f0"
-    fillOpacity={0.1}
-    label={{
-      value: `${box.title}\n${box.percent}`,
-      position: 'center',
-      fill: '#666',
-      fontSize: 12
-    }}
-  />
-))}
-
- </ScatterChart>
+  {gridBoxes.map((box, index) => (
+    <ReferenceArea
+      key={index}
+      x1={box.x[0]}
+      x2={box.x[1]}
+      y1={box.y[0]}
+      y2={box.y[1]}
+      stroke="#666"
+      strokeOpacity={0.3}
+      fill="#f0f0f0"
+      fillOpacity={0.1}
+      label={{
+        value: `${box.title}\n${box.percent}`,
+        position: 'center',
+        fill: '#666',
+        fontSize: 12
+      }}
+    />
+  ))}
+</ScatterChart>
                 
   </ResponsiveContainer>
 </div> 

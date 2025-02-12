@@ -7,9 +7,21 @@ export const schools = [
     },
     {
       id: 'school2',
-      name: 'תיכון דרכא רמלה',
+      name: 'אביגור',
       domain: 'school2',
-      logo: 'https://example.com/logo2.png',
+      logo: 'https://i.imgur.com/nG8QSio.png',
     },
+    {
+        id: 'school3',
+        name: 'המגינים',
+        domain: 'school3',
+        logo: 'https://i.imgur.com/pEchGv0.png',
+      },
+      {
+        id: 'school4',
+        name: 'כצנלסון',
+        domain: 'school4',
+        logo: 'https://i.imgur.com/jNBk6Ur.png',
+      },
     // אפשר להוסיף עוד בתי ספר
 ];
