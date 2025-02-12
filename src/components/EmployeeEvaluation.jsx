@@ -8,8 +8,24 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { Save } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine } from 'recharts';
 
-const EmployeeEvaluation = ({ schoolDomain }) => {
-  console.log('EmployeeEvaluation is rendering');
+const deleteEmployee = (employeeName) => {
+  const updatedEmployees = savedEmployees.filter(emp => emp.employeeName !== employeeName);
+  localStorage.setItem(`employeeEvaluations_${schoolDomain}`, JSON.stringify(updatedEmployees));
+  setSavedEmployees(updatedEmployees);
+  
+  // אם העובד שנמחק הוא העובד הנוכחי, נאפס את הטופס
+  if (employeeName === selectedEmployee?.employeeName) {
+    resetForm();
+  }
+  
+  setSaveMessage('העובד נמחק בהצלחה');
+  setTimeout(() => {
+    setSaveMessage('');
+  }, 3000);
+};
+
+
+const EmployeeEvaluation = ({ schoolDomain }) => {  // שינוי רק בשורה הזו  console.log('EmployeeEvaluation is rendering');
 
   const [employeeName, setEmployeeName] = useState('');
   const [performanceScores, setPerformanceScores] = useState({});
@@ -25,6 +41,22 @@ const EmployeeEvaluation = ({ schoolDomain }) => {
     potentialCategory: '',
     category: ''
   });
+  // הוספת פונקציית המחיקה החדשה כאן
+  const deleteEmployee = (employeeName) => {
+    const updatedEmployees = savedEmployees.filter(emp => emp.employeeName !== employeeName);
+    localStorage.setItem(`employeeEvaluations_${schoolDomain}`, JSON.stringify(updatedEmployees));
+    setSavedEmployees(updatedEmployees);
+    
+    if (selectedEmployee?.employeeName === employeeName) {
+      resetForm();
+    }
+    
+    setSaveMessage('העובד נמחק בהצלחה');
+    setTimeout(() => {
+      setSaveMessage('');
+    }, 3000);
+  };
+
 
   const prepareChartData = () => {
     const data = savedEmployees.map(employee => {
@@ -276,23 +308,35 @@ useEffect(() => {
               </Alert>
             )}
 
-            {savedEmployees.length > 0 && (
-              <div className="mt-4">
-                <Label>הערכות שמורות:</Label>
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  {savedEmployees.map((employee, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      onClick={() => loadEvaluation(employee)}
-                      className={selectedEmployee?.employeeName === employee.employeeName ? 'bg-blue-100' : ''}
-                    >
-                      {employee.employeeName} - {employee.date}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
+{savedEmployees.length > 0 && (
+  <div className="mt-4">
+    <Label>הערכות שמורות:</Label>
+    <div className="flex gap-2 mt-2 flex-wrap">
+      {savedEmployees.map((employee, index) => (
+        <div key={index} className="relative group">
+          <Button
+            variant="outline"
+            onClick={() => loadEvaluation(employee)}
+            className={`${selectedEmployee?.employeeName === employee.employeeName ? 'bg-blue-100' : ''} pr-8`}
+          >
+            {employee.employeeName} - {employee.date}
+          </Button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(`האם אתה בטוח שברצונך למחוק את ההערכה של ${employee.employeeName}?`)) {
+                deleteEmployee(employee.employeeName);
+              }
+            }}
+            className="absolute top-1 right-1 p-1 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
           </div>
 
           <div className="space-y-6">
