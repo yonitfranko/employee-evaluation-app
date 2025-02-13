@@ -5,8 +5,14 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    // בדיקת סטטוס מנהל
+    const adminStatus = localStorage.getItem('isAdmin') === 'true';
+    setIsAdmin(adminStatus);
+
+    // טעינת בתי הספר
     fetch('/api/schools')
       .then(res => res.json())
       .then(data => {
@@ -18,6 +24,11 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
+    setIsAdmin(false);
+  };
 
   const filteredSchools = schools.filter(school => 
     school.name.includes(searchTerm)
@@ -34,6 +45,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <div className="max-w-7xl mx-auto py-12 px-4">
+        {/* כפתורי התחברות/התנתקות */}
+        <div className="flex justify-end mb-4">
+          {isAdmin ? (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            >
+              התנתק
+            </button>
+          ) : (
+            <Link 
+              href="/admin-login"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              כניסת מנהל
+            </Link>
+          )}
+        </div>
+
         <h1 className="text-3xl font-bold text-center mb-8">
           מערכת הערכת עובדים - בחירת בית ספר
         </h1>
