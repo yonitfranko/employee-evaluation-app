@@ -1,0 +1,1 @@
+export const ADMIN_USERS = ['yonitfranko@gmail.com']; // או כל זיהוי אחר שתבחריgit

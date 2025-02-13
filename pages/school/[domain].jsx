@@ -6,6 +6,12 @@ export default function SchoolPage() {
   const router = useRouter();
   const { domain } = router.query;
   const [school, setSchool] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const adminStatus = localStorage.getItem('isAdmin') === 'true';
+    setIsAdmin(adminStatus);
+  }, []);
 
   useEffect(() => {
     if (domain) {
@@ -41,12 +47,14 @@ export default function SchoolPage() {
                 {school.name}
               </h1>
             </div>
-            <button
-              onClick={() => router.push('/')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              חזרה לרשימת בתי הספר
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => router.push('/')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                חזרה לרשימת בתי הספר
+              </button>
+            )}
           </div>
         </div>
       </header>
