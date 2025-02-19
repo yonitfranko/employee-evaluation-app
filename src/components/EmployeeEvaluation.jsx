@@ -6,9 +6,19 @@ import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Save } from 'lucide-react';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine } from 'recharts';
+import { 
+  ScatterChart, 
+  Scatter, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  ReferenceArea,
+  ReferenceLine  // הוספנו את זה
+} from 'recharts';
 
-const deleteEmployee = (employeeName) => {
+/*const deleteEmployee = (employeeName) => {
   const updatedEmployees = savedEmployees.filter(emp => emp.employeeName !== employeeName);
   localStorage.setItem(`employeeEvaluations_${schoolDomain}`, JSON.stringify(updatedEmployees));
   setSavedEmployees(updatedEmployees);
@@ -22,9 +32,55 @@ const deleteEmployee = (employeeName) => {
   setTimeout(() => {
     setSaveMessage('');
   }, 3000);
+};*/
+
+const managerRecommendations = {
+  'Super Bringgsters': {
+    feedback: 'שיחת משוב: התמקדות בהישגים והצלחות, זיהוי הזדמנויות צמיחה נוספות',
+    development: 'תוכנית פיתוח: מנטורינג למנהלים בכירים, הובלת פרויקטים אסטרטגיים',
+    placement: 'שיבוץ: הכנה לתפקיד ניהולי בכיר, חשיפה לפורומים בכירים'
+  },
+  'Rising Bringgsters': {
+    feedback: 'שיחת משוב: זיהוי חסמים לביצועים גבוהים, הבנת שאיפות מקצועיות',
+    development: 'תוכנית פיתוח: קורסי ניהול, ליווי אישי, פרויקטים מאתגרים',
+    placement: 'שיבוץ: תפקידי ביניים עם אחריות ניהולית מדורגת'
+  },
+  'Enigma': {
+    feedback: 'שיחת משוב: הבנת הפער בין הפוטנציאל לביצועים, זיהוי חסמים',
+    development: 'תוכנית פיתוח: ליווי צמוד, הצבת יעדים ברורים, בניית תכנית שיפור מדורגת',
+    placement: 'שיבוץ: בחינת התאמה לתפקיד הנוכחי, אפשרות לניוד לתפקיד מתאים יותר'
+  },
+  'Bringg Influencers': {
+    feedback: 'שיחת משוב: חיזוק תחומי החוזק, זיהוי תחומי השפעה',
+    development: 'תוכנית פיתוח: העמקת מומחיות מקצועית, פיתוח יכולות הדרכה והנחיה',
+    placement: 'שיבוץ: תפקידי מומחה בכיר, הובלת צוותים מקצועיים'
+  },
+  'Core Bringgsters': {
+    feedback: 'שיחת משוב: חיזוק תחושת השייכות, זיהוי תחומי עניין להתפתחות',
+    development: 'תוכנית פיתוח: העשרה מקצועית, הרחבת תחומי אחריות',
+    placement: 'שיבוץ: יציבות בתפקיד עם הזדמנויות להתפתחות אופקית'
+  },
+  'Dilemma': {
+    feedback: 'שיחת משוב: בירור מעמיק של הקשיים, הצבת ציפיות ברורות',
+    development: 'תוכנית פיתוח: תכנית שיפור אינטנסיבית עם יעדים מדידים',
+    placement: 'שיבוץ: בחינת התאמה מחדש, אפשרות לתפקיד מותאם יכולות'
+  },
+  'Experts': {
+    feedback: 'שיחת משוב: הערכת המומחיות המקצועית, זיהוי תחומי העמקה',
+    development: 'תוכנית פיתוח: העמקת מומחיות, פיתוח יכולות הדרכה',
+    placement: 'שיבוץ: ביסוס כמומחה מקצועי, שילוב בהדרכות והעברת ידע'
+  },
+  'Effective': {
+    feedback: 'שיחת משוב: חיזוק ביצועים קיימים, הגדרת תחומי שיפור ממוקדים',
+    development: 'תוכנית פיתוח: שיפור מיומנויות בסיסיות, הכשרות מקצועיות ממוקדות',
+    placement: 'שיבוץ: שמירה על יציבות בתפקיד, הגדרת משימות ברורות'
+  },
+  'Up or Out': {
+    feedback: 'שיחת משוב: שיחה ישירה על אי-התאמה, הגדרת ציפיות מינימליות',
+    development: 'תוכנית פיתוח: תכנית שיפור מיידית עם יעדים קצרי טווח',
+    placement: 'שיבוץ: שקילת סיום העסקה או מציאת תפקיד חלופי מתאים'
+  }
 };
-
-
 const EmployeeEvaluation = ({ schoolDomain }) => {  // שינוי רק בשורה הזו  console.log('EmployeeEvaluation is rendering');
 
   const [employeeName, setEmployeeName] = useState('');
@@ -180,19 +236,82 @@ const EmployeeEvaluation = ({ schoolDomain }) => {  // שינוי רק בשור�
   };
   const gridBoxes = [
     // שורה עליונה (40-60)
-    { title: 'Enigma', percent: '7%', x: [0, 15], y: [40, 60] },
-    { title: 'Rising Bringgsters', percent: '10%', x: [15, 30], y: [40, 60] },
-    { title: 'Super Bringgsters', percent: '5%', x: [30, 45], y: [40, 60] },
+    { 
+      title: 'Enigma\nחידה',
+      engTitle: 'Enigma',
+      hebTitle: 'חידה',
+      percent: '7%', 
+      x: [0, 15], 
+      y: [40, 60] 
+    },
+    { 
+      title: 'Rising Bringgsters\nעובד בצמיחה',
+      engTitle: 'Rising Bringgsters',
+      hebTitle: 'עובד בצמיחה', 
+      percent: '10%', 
+      x: [15, 30], 
+      y: [40, 60] 
+    },
+    { 
+      title: 'Super Bringgsters\nמנהיג עתידי',
+      engTitle: 'Super Bringgsters',
+      hebTitle: 'מנהיג עתידי', 
+      percent: '5%', 
+      x: [30, 45], 
+      y: [40, 60] 
+    },
     
     // שורה אמצעית (20-40)
-    { title: 'Dilemma', percent: '5%', x: [0, 15], y: [20, 40] },
-    { title: 'Core Bringgsters', percent: '35%', x: [15, 30], y: [20, 40] },
-    { title: 'Bringg Influencers', percent: '10%', x: [30, 45], y: [20, 40] },
+    { 
+      title: 'Dilemma\nדילמה',
+      engTitle: 'Dilemma',
+      hebTitle: 'דילמה', 
+      percent: '5%', 
+      x: [0, 15], 
+      y: [20, 40] 
+    },
+    { 
+      title: 'Core Bringgsters\nעובד ליבה',
+      engTitle: 'Core Bringgsters',
+      hebTitle: 'עובד ליבה', 
+      percent: '35%', 
+      x: [15, 30], 
+      y: [20, 40] 
+    },
+    { 
+      title: 'Bringg Influencers\nמבצע בעל השפעה',
+      engTitle: 'Bringg Influencers',
+      hebTitle: 'מבצע בעל השפעה', 
+      percent: '10%', 
+      x: [30, 45], 
+      y: [20, 40] 
+    },
     
     // שורה תחתונה (0-20)
-    { title: 'Up or Out', percent: '3%', x: [0, 15], y: [0, 20] },
-    { title: 'Effective', percent: '15%', x: [15, 30], y: [0, 20] },
-    { title: 'Experts', percent: '10%', x: [30, 45], y: [0, 20] }
+    { 
+      title: 'Up or Out\nעובד מתחת לציפיה',
+      engTitle: 'Up or Out',
+      hebTitle: 'עובד מתחת לציפיה', 
+      percent: '3%', 
+      x: [0, 15], 
+      y: [0, 20] 
+    },
+    { 
+      title: 'Effective\nעובד אפקטיבי',
+      engTitle: 'Effective',
+      hebTitle: 'עובד אפקטיבי', 
+      percent: '15%', 
+      x: [15, 30], 
+      y: [0, 20] 
+    },
+    { 
+      title: 'Experts\nאיש מקצוע נאמן',
+      engTitle: 'Experts',
+      hebTitle: 'איש מקצוע נאמן', 
+      percent: '10%', 
+      x: [30, 45], 
+      y: [0, 20] 
+    }
 ];
 
 useEffect(() => {
@@ -232,7 +351,7 @@ useEffect(() => {
   });
 }, [performanceScores, potentialScores]);
 
-    const referenceLines = [
+   /* const referenceLines = [
     // קווים אנכיים (על ציר ה-X)
     { x: 21, stroke: "#666", strokeDasharray: "3 3" },
     { x: 33, stroke: "#666", strokeDasharray: "3 3" },
@@ -247,7 +366,7 @@ useEffect(() => {
       stroke={line.stroke}
       strokeDasharray={line.strokeDasharray}
     />
-  ));
+  ));*/
   
  return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6" dir="rtl">
@@ -403,17 +522,34 @@ useEffect(() => {
     <p className="text-center text-sm mt-4 text-gray-700">
       {categoryDescriptions[results.category]}
     </p>
+    
+    {/* הוספת ההמלצות למנהל */}
+    <div className="mt-6 border-t pt-4">
+      <h4 className="text-lg font-semibold text-center mb-4">המלצות למנהל</h4>
+      <div className="space-y-3">
+        <div className="bg-white p-3 rounded-md">
+          <p className="font-medium text-blue-700">{managerRecommendations[results.category]?.feedback}</p>
+        </div>
+        <div className="bg-white p-3 rounded-md">
+          <p className="font-medium text-green-700">{managerRecommendations[results.category]?.development}</p>
+        </div>
+        <div className="bg-white p-3 rounded-md">
+          <p className="font-medium text-purple-700">{managerRecommendations[results.category]?.placement}</p>
+        </div>
+      </div>
+    </div>
   </div>
 )}
 <div className="mt-8 h-96">
   <h3 className="text-lg mb-4">פיזור עובדים לפי ביצועים ופוטנציאל</h3>
   <ResponsiveContainer width="100%" height="100%">
-  <ScatterChart margin={{
-    top: 20,
-    right: 20,
-    bottom: 20,
-    left: 20,
-  }}>
+  
+<ScatterChart margin={{
+  top: 20,
+  right: 20,
+  bottom: 20,
+  left: 20,
+}}>
   <CartesianGrid strokeDasharray="3 3" />
   <XAxis 
     type="number" 
@@ -429,27 +565,25 @@ useEffect(() => {
     label={{ value: 'פוטנציאל', angle: -90, position: 'left' }}
     domain={[0, 60]}
   />
- 
- <Tooltip
-  content={props => {
-    console.log('Tooltip props:', props);  // נוסיף לוג לבדיקה
-    const { active, payload } = props;
-    
-    if (!active || !payload || !payload.length) return null;
-    
-    const item = payload[0].payload;
-    return (
-      <div className="bg-white p-3 border rounded-lg shadow-lg" dir="rtl">
-        <p className="font-bold">{item.name}</p>
-        <div className="mt-1">
-          <p>ביצועים: {item.x}</p>
-          <p>פוטנציאל: {item.y}</p>
+  
+  <Tooltip
+    content={props => {
+      const { active, payload } = props;
+      if (!active || !payload || !payload.length) return null;
+      const item = payload[0].payload;
+      return (
+        <div className="bg-white p-3 border rounded-lg shadow-lg" dir="rtl">
+          <p className="font-bold">{item.name}</p>
+          <div className="mt-1">
+            <p>ביצועים: {item.x}</p>
+            <p>פוטנציאל: {item.y}</p>
+          </div>
         </div>
-      </div>
-    );
-  }}
-/>
-    <Scatter 
+      );
+    }}
+  />
+
+  <Scatter 
     name="עובדים" 
     data={prepareChartData()} 
     fill="#8884d8"
@@ -478,7 +612,7 @@ useEffect(() => {
       fill="#f0f0f0"
       fillOpacity={0.1}
       label={{
-        value: `${box.title}\n${box.percent}`,
+        value: `${box.hebTitle}\n${box.engTitle}\n${box.percent}`,
         position: 'center',
         fill: '#666',
         fontSize: 12
